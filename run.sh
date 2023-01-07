@@ -1,7 +1,8 @@
 python main.py \
---logdir 'run3/Cifar10_noMTI' \
 --device 0 \
---useMTI 0 \
+--logdir 'run' \
+--student 'mobilenetv2' \
 --useTeacher 0 \
---epochs 1000 \
---dataset 'Cifar10' 
+--lr 1e-3 \
+--optimizer 'AdamW' \
+--epochs 100
