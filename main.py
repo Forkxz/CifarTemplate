@@ -16,7 +16,6 @@ import torchvision.transforms as transforms
 import torch.optim.lr_scheduler as lr_scheduler
 
 import models
-from utils.test import accuracy
 from utils.KD_loss import KD_loss
 from utils.test import test
 from utils.util import select_device, increment_dir, setup_seed, AverageMeter
@@ -174,18 +173,18 @@ if __name__ == '__main__':
 
     parser.add_argument('--Pretrain', type=str, default='',
                         help='Pretrained model dir')
-    parser.add_argument('--device', default='1',
+    parser.add_argument('--device', default='0',
                         help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument('--logdir', type=str,
                         default='Debug', help='logging directory')
 
-    parser.add_argument('--student', type=str, default='mobilenetv2',choices=model_names,help='model architecture: ' +' | '.join(model_names))
-    parser.add_argument('--teacher', type=str, default='resnet18',choices=model_names,help='model architecture: ' +' | '.join(model_names))
+    parser.add_argument('--student', type=str, default='resnet20_cifar',choices=model_names,help='model architecture: ' +' | '.join(model_names))
+    parser.add_argument('--teacher', type=str, default='resnet20_cifar',choices=model_names,help='model architecture: ' +' | '.join(model_names))
     parser.add_argument('--teacherDir', type=str, default='',help='Pretrained teacher model dir')
     parser.add_argument('--useTeacher',type= int, default=0)
 
     parser.add_argument('--data', action='store',
-                        default='data', help='dataset path')
+                        default='../data', help='dataset path')
     parser.add_argument('--dataset', action='store',
                         default='Cifar10', help='dataset Cifar10 or Cifar100')  
 

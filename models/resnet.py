@@ -106,6 +106,41 @@ class ResNet(nn.Module):
         x = self.fc(x)
         return x
 
+class ResNet_Cifar(nn.Module):
+
+    def __init__(self, block, layers, num_classes=10):
+        super(ResNet_Cifar, self).__init__()
+        self.in_planes = 16
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(16)
+        self.act1 = nn.ReLU(inplace=True)
+
+        self.layer1 = self._make_layer(block, 16, layers[0], stride=1)
+        self.layer2 = self._make_layer(block, 32, layers[1], stride=2)
+        self.layer3 = self._make_layer(block, 64, layers[2], stride=2)
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(64 * block.expansion, num_classes)
+
+    def _make_layer(self, block, planes, num_blocks, stride):
+        strides = [stride] + [1]*(num_blocks-1)
+        layers = []
+        for stride in strides:
+            layers.append(block(self.in_planes, planes, stride))
+            self.in_planes = planes * block.expansion
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        x = self.act1(self.bn1(self.conv1(x)))
+
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
+
+        return x
 
 def resnet18(**kwags):
     return ResNet(BasicBlock, [2, 2, 2, 2],**kwags)
@@ -125,3 +160,22 @@ def resnet101(**kwags):
 
 def resnet152(**kwags):
     return ResNet(Bottleneck, [3, 8, 36, 3],**kwags)
+
+def resnet20_cifar(**kwargs):
+    model = ResNet_Cifar(BasicBlock, [3, 3, 3], **kwargs)
+    return model
+
+
+def resnet32_cifar(**kwargs):
+    model = ResNet_Cifar(BasicBlock, [5, 5, 5], **kwargs)
+    return model
+
+
+def resnet44_cifar(**kwargs):
+    model = ResNet_Cifar(BasicBlock, [7, 7, 7], **kwargs)
+    return model
+
+
+def resnet56_cifar(**kwargs):
+    model = ResNet_Cifar(BasicBlock, [9, 9, 9], **kwargs)
+    return model
